@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Faculty Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            padding: 20px;
+            text-align: center;
+        }
+
+        h2 {
+            color: #3498db;
+        }
+
+        table {
+            width: 80%;
+            margin: 20px auto;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 10px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+
+        th {
+            background-color: #3498db;
+            color: white;
+        }
+
+        .button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .button:hover {
+            background-color: #2980b9;
+        }
+
+        form {
+            margin: 20px auto;
+            width: 80%;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+    <h2>Faculty Dashboard</h2>
+    <h3>Student Scores</h3>
+    <table>
+        <tr>
+            <th>Username</th>
+            <th>Score</th>
+        </tr>
+        {% for student in students_scores %}
+        <tr>
+            <td>{{ student[0] }}</td>
+            <td>{{ student[1] }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    <h3>Add New Question</h3>
+    <form method="post" action="/add_question">
+        <label for="question">Question:</label><br>
+        <input type="text" name="question" required><br><br>
+
+        <label for="option_a">Option A:</label><br>
+        <input type="text" name="option_a" required><br><br>
+
+        <label for="option_b">Option B:</label><br>
+        <input type="text" name="option_b" required><br><br>
+
+        <label for="option_c">Option C:</label><br>
+        <input type="text" name="option_c" required><br><br>
+
+        <label for="option_d">Option D:</label><br>
+        <input type="text" name="option_d" required><br><br>
+
+        <label for="correct_option">Correct Option (A/B/C/D):</label><br>
+        <input type="text" name="correct_option" required pattern="[A-D]"><br><br>
+
+        <button class="button" type="submit">Add Question</button>
+    </form>
+
+    <a href="/logout" class="button">Logout</a>
+</body>
+</html>
