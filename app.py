@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, session
+from flask import Flask, render_template, request, redirect, url_for, session 
 import mysql.connector
 
 app = Flask(__name__)
@@ -23,26 +23,48 @@ def login():
 def authenticate():
     username = request.form['username']
     password = request.form['password']
+    role = request.form.get('role')  # Get the role from the radio button
 
-    # Check for student login
-    cursor.execute("SELECT id FROM users WHERE username=%s AND password=%s", (username, password))
-    user = cursor.fetchone()
-    
-    if user:
-        session['user_id'] = user[0]
-        session['role'] = 'student'
-        return redirect(url_for('quiz'))
-    
-    # Check for faculty login
-    cursor.execute("SELECT id FROM faculty WHERE username=%s AND password=%s", (username, password))
-    faculty = cursor.fetchone()
-    
-    if faculty:
-        session['user_id'] = faculty[0]
-        session['role'] = 'faculty'
-        return redirect(url_for('faculty_dashboard'))
+    if role == 'student':
+        # Check for student login
+        cursor.execute("SELECT id FROM users WHERE username=%s AND password=%s", (username, password))
+        user = cursor.fetchone()
 
-    return "Invalid credentials!"
+        if user:
+            session['user_id'] = user[0]
+            session['role'] = 'student'
+            return redirect(url_for('quiz'))
+
+    elif role == 'faculty':
+        # Check for faculty login
+        cursor.execute("SELECT id FROM faculty WHERE username=%s AND password=%s", (username, password))
+        faculty = cursor.fetchone()
+
+        if faculty:
+            session['user_id'] = faculty[0]
+            session['role'] = 'faculty'
+            return redirect(url_for('faculty_dashboard'))
+
+    return "Invalid credentials or role not selected!"
+
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        role = request.form.get('role')
+
+        if role == 'student':
+            # Register a student
+            cursor.execute("INSERT INTO users (username, password) VALUES (%s, %s)", (username, password))
+        elif role == 'faculty':
+            # Register a faculty
+            cursor.execute("INSERT INTO faculty (username, password) VALUES (%s, %s)", (username, password))
+
+        db.commit()
+        return redirect(url_for('login'))
+
+    return render_template('register.html')
 
 @app.route('/quiz')
 def quiz():
